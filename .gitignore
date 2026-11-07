@@ -17,4 +17,5 @@ venv/
 Thumbs.db
 
 # Runtime checkpoints
-state/
+state/*
+!state/.gitkeep
