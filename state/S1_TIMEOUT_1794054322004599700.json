@@ -1,0 +1,21 @@
+{
+    "run_id": "S1_TIMEOUT_1794054322004599700",
+    "scenario_id": "S1_TIMEOUT",
+    "messages": [
+        {
+            "role": "system",
+            "content": "\n                AGENT\n\n                You are an Instamart refund support agent.\n                Follow the refund policy and use the supplied tools.\n                Only completed orders are eligible.\n                Delivery above 45 minutes qualifies for a full refund.\n                Refunds above INR 1000 must be escalated to a human.\n                Never issue a refund for an ineligible order.\n                "
+        },
+        {
+            "role": "user",
+            "content": "My order ORD-100048 reached me very late. I would like a refund."
+        }
+    ],
+    "tokens_used": 0,
+    "llm_calls": 0,
+    "step_number": 0,
+    "steps": [],
+    "tools_executed": [],
+    "status": "FALLBACK_TIMEOUT",
+    "final_answer": "FALLBACK_TIMEOUT: Request handed to a human agent."
+}
