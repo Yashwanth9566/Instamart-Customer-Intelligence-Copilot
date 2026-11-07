@@ -1,33 +1,32 @@
-# Instamart Customer Intelligence & Support Copilot
+# Overview
 
-## 1. Project Overview
+## Instamart Customer Intelligence & Support Copilot
 
-The Instamart Customer Intelligence & Support Copilot is an offline, AI-powered customer intelligence and support automation project.
+The Instamart Customer Intelligence & Support Copilot is an offline data analytics and AI-based customer support project. It combines data engineering, machine learning, natural language processing, Retrieval-Augmented Generation (RAG), and tool-based AI agents to improve customer understanding and support operations.
 
-The project combines data analytics, machine learning, natural language processing, Retrieval-Augmented Generation (RAG), and AI agents to improve customer support operations.
+The project is divided into four parts:
 
-The project consists of four major components:
+- **Part A – Data Foundation:** Generate, clean, store, and validate customer, product, and order data.
+- **Part B – Customer Segmentation and Lapse Prediction:** Identify customer segments and predict customers who may become inactive.
+- **Part C – Support Ticket Triage with Guardrails:** Classify customer support tickets while applying validation and sensitive information redaction.
+- **Part D – Policy RAG Assistant and Refund Agent:** Retrieve relevant company policies and simulate refund decisions using a tool-based agent.
 
-- **Part A – Data Foundation:** Data generation, cleaning, validation, and SQLite database creation.
-- **Part B – Customer Segmentation and Lapse Prediction:** Customer segmentation, cohort analysis, and machine learning models to predict customer lapse.
-- **Part C – Support Ticket Triage:** Automated ticket classification, sensitive information redaction, and output validation.
-- **Part D – Policy RAG Assistant and Refund Agent:** Policy retrieval, automated refund decisions, human escalation, and checkpoint-based agent execution.
+The project uses synthetic Instamart-style data and runs locally without requiring an external LLM API or API key.
 
-The project uses synthetic Instamart data and a supplied offline mock LLM. No external API key or internet connection is required to execute the AI workflows.
-
----
-
-## 2. Project Structure
+## Project Structure
 
 ```text
-Instamart_Capstone/
+Instamart-Customer-Intelligence-Copilot/
 │
 ├── data/
-│   ├── raw/
 │   ├── clean/
-│   └── policies/
+│   │   ├── customers.csv
+│   │   ├── products.csv
+│   │   └── orders.csv
+│   └── instamart.db
 │
 ├── sql/
+│   └── queries.sql
 │
 ├── src/
 │   ├── part_a/
@@ -36,165 +35,248 @@ Instamart_Capstone/
 │   └── part_d/
 │
 ├── outputs/
+│   ├── customer_segments.csv
+│   ├── cohort_analysis.csv
+│   ├── lapse_model.joblib
+│   ├── retention_list.csv
+│   ├── lapse_model_comparison.csv
+│   ├── triage_results.csv
+│   ├── triage_budget_demo.csv
+│   ├── agent_runs.jsonl
+│   └── refund_ledger.jsonl
 │
 ├── state/
-├── .gitignore
+│   └── Agent checkpoint files
+│
 ├── generate_data.py
 ├── mock_llm.py
-├── README.md
-└── requirements.txt
+├── requirements.txt
+├── .gitignore
+└── README.md
+```
 
-### Important Outputs
-
-- Cleaned datasets
-- SQLite database
-- Customer segments
-- Cohort analysis
-- Lapse prediction model
-- Retention list
-- Ticket classification results
-- Policy retrieval evaluation
-- Refund transaction ledger
-- Agent execution logs
-- Agent checkpoint files
-
----
-
-## 3. Technologies Used
+## Technologies Used
 
 - Python
 - Pandas
 - NumPy
-- Scikit-learn
 - SQLite
-- TF-IDF Vectorization
-- Cosine Similarity
+- SQL
+- Scikit-learn
 - Logistic Regression
 - Random Forest
-- Natural Language Processing
-- Retrieval-Augmented Generation (RAG)
-- ReAct Agent Workflow
+- TF-IDF
+- Cosine Similarity
 - JSON and JSONL
+- Git and GitHub
+- Visual Studio Code
 
----
+# Reproduce
 
-## 4. Part A – Data Foundation
+Follow the commands below from the project root directory to reproduce the project on Windows.
 
-The first part establishes the data foundation for the project.
+1. Create a virtual environment:
+
+   `python -m venv .venv`
+
+2. Activate the virtual environment:
+
+   `.\.venv\Scripts\Activate.ps1`
+
+3. Upgrade pip:
+
+   `python -m pip install --upgrade pip`
+
+4. Install the required dependencies:
+
+   `python -m pip install -r requirements.txt`
+
+5. Generate the datasets:
+
+   `python generate_data.py`
+
+6. Execute Part A – Data Foundation:
+
+   `python src/part_a/part_a.py`
+
+7. Execute Part B – Customer Segmentation and Lapse Prediction:
+
+   `python src/part_b/part_b.py`
+
+8. Execute Part C – Support Ticket Triage:
+
+   `python src/part_c/part_c.py`
+
+9. Execute Part D – Policy RAG Assistant and Refund Agent:
+
+   `python src/part_d/part_d.py`
+
+The project uses the supplied `mock_llm.py` as an offline stand-in for a hosted language model. No API key or external LLM service is required.
+
+# Part A
+
+## Data Foundation
+
+Part A establishes the data foundation for the project. Customer, product, and order datasets are generated, cleaned, stored, and validated.
 
 ### Activities Completed
 
-- Generated synthetic customer, product, order, and ticket datasets.
-- Cleaned and validated the datasets.
-- Stored cleaned datasets in CSV format.
+- Generated synthetic customer, product, and order datasets.
+- Cleaned and prepared the datasets.
+- Stored the cleaned datasets as CSV files.
 - Created a SQLite database.
-- Created and executed SQL queries.
-- Validated database tables and columns.
+- Created the required database tables.
+- Prepared SQL queries for data analysis.
+- Verified database records and data integrity.
 
-### Database Tables
+### Database Record Counts
 
-- Customers
-- Products
-- Orders
+| Database Table | Number of Records |
+|---|---:|
+| Customers | 1,200 |
+| Products | 40 |
+| Orders | 12,309 |
 
-The SQLite database provides a structured foundation for customer analytics and support automation.
+### Database Integrity Results
 
----
+| Validation Check | Result |
+|---|---:|
+| Orders without matching customers | 0 |
+| Orders without matching products | 0 |
+| Foreign key violations | 0 |
 
-## 5. Part B – Customer Segmentation and Lapse Prediction
+The database integrity check returned no foreign key violations.
 
-This component focuses on identifying customer groups and predicting customers who may become inactive.
+### Key Files
+
+- `data/clean/customers.csv`
+- `data/clean/products.csv`
+- `data/clean/orders.csv`
+- `data/instamart.db`
+- `sql/queries.sql`
+
+# Part B
+
+## Customer Segmentation and Lapse Prediction
+
+Part B focuses on understanding customer behaviour, identifying customer segments, and predicting customers who may become inactive.
 
 ### Activities Completed
 
-- Customer segmentation.
-- Cohort analysis.
-- Customer lapse prediction.
-- Model comparison.
-- Retention list generation.
+- Performed customer data analysis.
+- Created customer segments.
+- Conducted cohort analysis.
+- Prepared features for lapse prediction.
+- Trained and evaluated machine learning models.
+- Generated a customer retention list.
 
 ### Machine Learning Models
 
-Two classification algorithms were evaluated:
+Two machine learning algorithms were implemented:
 
 1. Logistic Regression
 2. Random Forest
 
-### Model Results
+### Model Evaluation Results
 
-| Model | Test F1 Score |
+The models were evaluated using the F1-score on the test dataset.
+
+| Model | Test F1-Score |
 |---|---:|
 | Logistic Regression | 0.719 |
 | Random Forest | 0.706 |
 
-**Result:** Logistic Regression achieved the higher test F1 score of 0.719.
+**Required target F1-score:** 0.55 or above.
 
-Both models exceeded the required minimum F1 score of 0.55.
+Both models achieved the required target. Logistic Regression produced the higher test F1-score of 0.719.
 
 ### Key Outputs
 
-- `customer_segments.csv`
-- `cohort_analysis.csv`
-- `lapse_model.joblib`
-- `retention_list.csv`
-- `lapse_model_comparison.csv`
+- `outputs/customer_segments.csv`
+- `outputs/cohort_analysis.csv`
+- `outputs/lapse_model.joblib`
+- `outputs/retention_list.csv`
+- `outputs/lapse_model_comparison.csv`
 
----
+# Part C
 
-## 6. Part C – Support Ticket Triage with Guardrails
+## Support Ticket Triage with Guardrails
 
-This component automates customer support ticket classification while maintaining output validation and privacy safeguards.
+Part C implements a support ticket classification system using the supplied offline language model simulator. The system classifies customer support tickets while applying input validation, output validation, token budgeting, and sensitive information redaction.
 
 ### Activities Completed
 
-- Ticket classification using zero-shot prompting.
-- Ticket classification using few-shot prompting.
-- Sensitive information redaction.
-- Invalid output detection.
-- Empty ticket handling.
-- Long ticket detection.
-- Classification accuracy evaluation.
-- Token usage comparison.
+- Implemented support ticket classification.
+- Used zero-shot and few-shot classification approaches.
+- Implemented output validation.
+- Added fallback handling for invalid responses.
+- Added checks for empty and excessively long inputs.
+- Implemented sensitive information redaction.
+- Compared classification accuracy and token usage.
 
 ### Classification Results
 
 | Metric | Zero-Shot | Few-Shot |
 |---|---:|---:|
-| Classified tickets | 147 | 147 |
+| Classified Tickets | 147 | 147 |
 | Accuracy | 85.71% | 100.00% |
-| Total tokens | 10,336 | 19,696 |
-| Average tokens per ticket | 70.31 | 133.99 |
+| Total Tokens | 10,336 | 19,696 |
+| Average Tokens per Ticket | 70.31 | 133.99 |
+
+The few-shot approach achieved higher classification accuracy but required more tokens than the zero-shot approach.
 
 ### Guardrail Results
 
-| Status | Count |
+The system processed 164 support ticket records.
+
+| Processing Status | Number of Tickets |
 |---|---:|
-| classified_json | 135 |
-| classified_keyword | 12 |
-| flagged_invalid_output | 9 |
-| skipped_empty | 4 |
-| flagged_long | 4 |
+| Classified JSON | 135 |
+| Classified Keyword | 12 |
+| Flagged Invalid Output | 9 |
+| Skipped Empty | 4 |
+| Flagged Long | 4 |
+| **Total** | **164** |
 
 ### Sensitive Information Redaction
 
-| Information Type | Redactions |
+| Information Type | Number of Redactions |
 |---|---:|
-| Emails | 55 |
-| Phone numbers | 91 |
+| Email Addresses | 55 |
+| Phone Numbers | 91 |
 | Order IDs | 132 |
-| **Total** | **278** |
+| **Total Redactions** | **278** |
 
-**Result:** Few-shot classification achieved 100% accuracy on the evaluated synthetic dataset, while the guardrails identified invalid, empty, and excessively long inputs.
+### Key Outputs
 
----
+- `outputs/triage_results.csv`
+- `outputs/triage_budget_demo.csv`
 
-## 7. Part D – Policy RAG Assistant and Refund Agent
+# Part D
 
-This component combines policy retrieval with an automated refund decision-making agent.
+## Policy RAG Assistant and Refund Agent
 
-### 7.1 Policy RAG
+Part D implements a Policy Retrieval-Augmented Generation (RAG) system and a tool-based refund agent. The system retrieves relevant policy information and uses order details and refund rules to determine appropriate customer support decisions.
 
-The system retrieves relevant information from five policy documents:
+## 1. Policy RAG Assistant
+
+The policy retrieval system processes policy documents, divides them into smaller chunks, and retrieves relevant information based on customer queries.
+
+### RAG Configuration
+
+| Component | Configuration |
+|---|---|
+| Chunking Method | Word-based chunking |
+| Chunk Size | 40 words |
+| Chunk Overlap | 10 words |
+| Total Chunks | 15 |
+| Retrieval Method | TF-IDF |
+| Similarity Measure | Cosine Similarity |
+| Top Results Retrieved | 3 |
+
+### Policy Documents
+
+The system uses five policy documents:
 
 - Refund Policy
 - Delivery Policy
@@ -202,226 +284,162 @@ The system retrieves relevant information from five policy documents:
 - Payment Policy
 - Privacy Policy
 
-### RAG Configuration
-
-| Parameter | Value |
-|---|---|
-| Chunk size | 40 words |
-| Chunk overlap | 10 words |
-| Total chunks | 15 |
-| Retrieval method | TF-IDF |
-| Similarity method | Cosine Similarity |
-| Top results retrieved | 3 |
-
-### RAG Evaluation
+### RAG Evaluation Results
 
 | Evaluation Metric | Result |
 |---|---:|
-| Correct document retrieval | 12/12 |
-| Expected facts retrieved | 12/12 |
-| Fallback checks | 2/2 |
+| Correct Document Retrieval | 12/12 |
+| Expected Facts Retrieved | 12/12 |
+| Fallback Responses | 2/2 |
 
 ### Chunk Overlap Comparison
 
-| Configuration | Total Chunks | Correct Documents | Expected Facts |
-|---|---:|---:|---:|
-| With 10-word overlap | 15 | 12/12 | 12/12 |
-| Without overlap | 13 | 12/12 | 10/12 |
+The effect of chunk overlap was evaluated by comparing retrieval performance.
 
-The overlap configuration performed better because overlapping text helps preserve information that might otherwise be split across chunk boundaries.
+| Metric | With Overlap | Without Overlap |
+|---|---:|---:|
+| Total Chunks | 15 | 13 |
+| Correct Document Retrieval | 12/12 | 12/12 |
+| Expected Facts Retrieved | 12/12 | 10/12 |
 
-### 7.2 Refund Agent
+The overlapping chunk configuration retrieved all expected facts in the evaluation, while the non-overlapping configuration retrieved 10 out of 12 expected facts.
 
-The refund agent uses a tool-based workflow to make decisions based on order information and retrieved policies.
+## 2. Refund Agent
+
+The refund agent uses a tool-based approach to retrieve order information, search policies, calculate refund amounts, issue simulated refunds, and escalate cases when required.
+
+### Tools Implemented
 
 The agent uses the following tools:
 
-1. `get_order` – Retrieves order information.
-2. `search_policy` – Retrieves relevant policy information.
-3. `calculate_refund` – Calculates the eligible refund amount.
-4. `issue_refund` – Records an automatically approved refund.
-5. `escalate_to_human` – Records cases requiring human approval.
+1. `get_order`
+2. `search_policy`
+3. `calculate_refund`
+4. `issue_refund`
+5. `escalate_to_human`
 
 ### Refund Decision Rules
 
-- Only completed orders are eligible for refunds.
-- Orders delivered in more than 45 minutes qualify for a full late-delivery refund.
+- Only completed orders are considered for refund processing.
+- Orders delivered more than 45 minutes late qualify for a full refund under the implemented rules.
 - Orders delivered within 45 minutes do not qualify for a late-delivery refund.
-- Refunds up to INR 1,000 are approved automatically.
-- Refunds above INR 1,000 are escalated to a human support lead.
-- Missing orders return a NOT_FOUND response.
+- Refunds up to INR 1,000 can be processed automatically.
+- Refund amounts above INR 1,000 require human escalation.
+- Missing orders return a `NOT_FOUND` status.
 
-### 7.3 Agent Scenario Evaluation
+All refund operations are simulated. No real payments or customer transactions are processed.
 
-| Scenario | Expected Outcome | Actual Outcome |
+## 3. Seven-Scenario Agent Evaluation
+
+The agent was evaluated using seven scenarios.
+
+| Scenario | Expected Result | Actual Result | Tool Calls | Tokens Used |
+|---|---|---|---:|---:|
+| S1 | REFUND | REFUND | 5 | 1,152 |
+| S2 | REFUND | REFUND | 5 | 1,152 |
+| S3 | ESCALATE | ESCALATE | 5 | 1,139 |
+| S4 | DENIED | DENIED | 4 | 809 |
+| S5 | DENIED | DENIED | 3 | 490 |
+| S6 | NOT_FOUND | NOT_FOUND | 2 | 174 |
+| S7 | FALLBACK | FALLBACK_MAX_ITERATIONS | 6 | 3,306 |
+| **Total** | | | **30** | **8,222** |
+
+The first six scenarios produced the expected decision statuses. Scenario S7 safely reached the maximum-iteration fallback.
+
+## 4. Stop-Safely Demonstrations
+
+The agent was tested to ensure that it stops safely when execution limits are reached.
+
+| Demonstration | Actual Status | Result |
 |---|---|---|
-| S1 | REFUND | REFUND |
-| S2 | REFUND | REFUND |
-| S3 | ESCALATE | ESCALATE |
-| S4 | DENIED | DENIED |
-| S5 | DENIED | DENIED |
-| S6 | NOT_FOUND | NOT_FOUND |
-| S7 | FALLBACK | FALLBACK_MAX_ITERATIONS |
+| Token Limit | FALLBACK_TOKEN_LIMIT | Passed |
+| Timeout | FALLBACK_TIMEOUT | Passed |
 
-All seven scenarios produced the intended outcomes.
+The token-limit demonstration stopped when the configured token budget was reached. The timeout demonstration stopped safely when the execution time limit was reached.
 
-S7 correctly triggered a fallback after reaching the maximum iteration limit.
+The maximum-iteration fallback was also demonstrated in Scenario S7, which returned `FALLBACK_MAX_ITERATIONS` after 6 tool calls.
 
-### 7.4 Agent Execution Results
+## 5. Crash-and-Resume Demonstration
 
-| Scenario | LLM Calls | Tokens Used |
-|---|---:|---:|
-| S1 | 5 | 1,152 |
-| S2 | 5 | 1,152 |
-| S3 | 5 | 1,139 |
-| S4 | 4 | 809 |
-| S5 | 3 | 490 |
-| S6 | 2 | 174 |
-| S7 | 6 | 3,306 |
-| **Total** | **30** | **8,222** |
+A checkpoint and resume mechanism was implemented to preserve agent progress during execution.
 
-### 7.5 Safety and Reliability Tests
+### Execution Process
 
-The agent was tested with three safety limits.
+1. The agent started processing a refund request.
+2. It executed `get_order`.
+3. It executed `search_policy`.
+4. The agent state was saved to a checkpoint.
+5. Execution was paused to simulate an interruption.
+6. The saved checkpoint was loaded.
+7. The agent resumed from its saved state.
+8. It executed `calculate_refund`.
+9. It executed `issue_refund`.
+10. The agent completed the refund workflow.
 
-| Test | Expected Result | Actual Result |
-|---|---|---|
-| Token limit | FALLBACK_TOKEN_LIMIT | Passed |
-| Time limit | FALLBACK_TIMEOUT | Passed |
-| Maximum iterations | FALLBACK_MAX_ITERATIONS | Passed |
+### Complete List of Tools Executed
 
-These tests demonstrate that the agent can stop execution safely when resource limits are reached.
+`get_order → search_policy → calculate_refund → issue_refund`
 
-### 7.6 Checkpoint and Resume
+### Crash-and-Resume Result
 
-The agent supports checkpoint-based execution.
+| Item | Result |
+|---|---|
+| Initial Status | PAUSED |
+| Tools Executed Before Pause | get_order, search_policy |
+| Resumed Status | REFUND |
+| Final Answer | REFUND: INR 128.25 issued. |
 
-During testing:
+The checkpoint and resume test confirmed that the agent continued from its saved state without repeating the completed operations.
 
-- The agent executed `get_order` and `search_policy`.
-- Its execution state was saved.
-- Execution was paused to simulate a crash.
-- The saved checkpoint was loaded.
-- The agent resumed from its previous state.
-- It completed the refund workflow successfully.
+## 6. Agent Logging
 
-Final result:
+The project records agent execution details for tracking and evaluation.
 
-`REFUND: INR 128.25 issued.`
+### Log Files
 
-This demonstrates that the agent can resume execution without repeating previously completed tool operations.
+- `outputs/agent_runs.jsonl`
+- `outputs/refund_ledger.jsonl`
 
-### 7.7 Agent Logging
+The agent execution log stores scenario details, status, final answers, tool calls, arguments, observations, and token usage.
 
-Agent execution details are stored in:
+The refund ledger stores simulated refund transaction records.
 
-`outputs/agent_runs.jsonl`
+## 7. ReAct vs Plan-and-Execute
 
-The log contains:
+### ReAct Approach
 
-- Scenario ID
-- Final status
-- Final answer
-- LLM calls
-- Token usage
-- Executed tools
-- Tool arguments
-- Tool observations
+ReAct stands for Reasoning and Acting. In this approach, the agent alternates between reasoning about the current situation and executing tools to obtain information or perform an action.
 
-Refund and escalation transactions are recorded separately in:
+### Plan-and-Execute Approach
 
-`outputs/refund_ledger.jsonl`
+In Plan-and-Execute, the system first creates a sequence of tasks and then executes the planned steps.
 
----
+| ReAct | Plan-and-Execute |
+|---|---|
+| Reasons and acts step by step. | Creates a plan before execution. |
+| Can adapt based on tool results. | Follows a predefined execution plan. |
+| Suitable for dynamic support queries. | Suitable for structured multi-step workflows. |
+| Decisions are made during execution. | Tasks are organised before execution. |
 
-## 8. ReAct vs Plan-and-Execute
+The project uses a tool-based agent workflow to retrieve order information, search policies, calculate refunds, and determine whether a case should be refunded, denied, or escalated.
 
-ReAct and Plan-and-Execute are two approaches to building AI agents.
+# Limitations and Next Steps
 
-**ReAct** combines reasoning and tool execution step by step. The agent observes the result of each tool before deciding its next action.
+## Limitations
 
-**Plan-and-Execute** creates a complete plan first and then executes the planned steps.
+- The project uses synthetic data rather than actual Instamart customer records.
+- The language model is simulated using the supplied offline `mock_llm.py`.
+- The refund agent does not connect to an actual payment gateway.
+- The policy documents are limited to the sample policies included in the project.
+- Machine learning predictions depend on the quality and characteristics of the generated dataset.
+- The project is designed for local execution and demonstration rather than production deployment.
 
-For this project, ReAct is suitable because refund decisions depend on live order information, policy retrieval results, and calculated refund amounts. The next action may change depending on the observations returned by the tools.
+## Next Steps
 
-For example, a completed order may qualify for an automatic refund, while a refund above INR 1,000 requires human escalation. A cancelled order or missing order requires a different response.
-
-The ReAct workflow supports these conditional decisions and allows the agent to respond dynamically to tool observations.
-
-The seven scenario tests, checkpoint-resume demonstration, and safety-stop tests show how this workflow operates in the project.
-
----
-
-## 9. How to Reproduce the Project
-
-### Requirements
-
-- Python 3.14.10 or compatible Python version
-- Visual Studio Code
-- Required Python libraries
-- Windows or another Python-supported operating system
-
-### Installation
-
-Open the project folder in VS Code and use the integrated terminal.
-
-Install the required packages if they are not already installed:
-
-```bash
-pip install pandas numpy scikit-learn joblib
-```
-
-### Execution
-
-Generate the synthetic datasets:
-
-```bash
-python generate_data.py
-```
-
-Run the individual Part A, Part B, Part C, and Part D Python scripts from their respective folders.
-
-Part C:
-
-```bash
-python src/part_c/part_c.py
-```
-
-Part D:
-
-```bash
-python src/part_d/part_d.py
-```
-
-The project uses the supplied `mock_llm.py` file as an offline stand-in for a hosted language model. No API key is required.
-
----
-
-## 10. Limitations and Future Improvements
-
-### Limitations
-
-1. The project uses synthetic datasets rather than actual Instamart customer records.
-2. The supplied mock LLM is a deterministic offline simulation and does not represent the full capabilities of a hosted language model.
-3. TF-IDF retrieval primarily relies on lexical similarity and may not identify all semantically related queries.
-4. The refund ledger records simulated transactions rather than actual financial transactions.
-5. The machine learning models require validation on larger real-world datasets before production use.
-
-### Future Improvements
-
-1. Integrate larger and more diverse datasets.
-2. Evaluate additional machine learning algorithms.
-3. Improve semantic policy retrieval using embedding-based methods.
-4. Integrate a production-grade language model with appropriate security controls.
-5. Develop a dashboard for customer segmentation and support analytics.
-6. Integrate the system with a real customer support platform after proper testing and authorization.
-
----
-
-## 11. Conclusion
-
-The Instamart Customer Intelligence & Support Copilot demonstrates how data analytics, machine learning, NLP, RAG, and AI agents can be combined to improve customer intelligence and support automation.
-
-The project successfully establishes a data foundation, identifies customer segments, predicts customer lapse, classifies support tickets, retrieves relevant policies, and automates refund decisions through a tool-based agent.
-
-The evaluation results demonstrate the feasibility of combining analytical and AI-driven approaches in a simulated e-commerce customer support environment.
+- Test the system with larger and more diverse datasets.
+- Improve customer segmentation and lapse prediction.
+- Expand the policy knowledge base.
+- Improve support ticket classification and validation.
+- Integrate a real language model in an appropriately secured environment if permitted.
+- Add monitoring and more extensive testing before production deployment.
+- Evaluate the system using real-world operational requirements and authorised data.
