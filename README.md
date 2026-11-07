@@ -38,11 +38,11 @@ Instamart_Capstone/
 ├── outputs/
 │
 ├── state/
-│
+├── .gitignore
 ├── generate_data.py
 ├── mock_llm.py
-└── README.md
-```
+├── README.md
+└── requirements.txt
 
 ### Important Outputs
 
